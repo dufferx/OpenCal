@@ -1,0 +1,70 @@
+import SwiftUI
+
+struct HomeView: View {
+    @EnvironmentObject private var viewModel: HomeViewModel
+    @EnvironmentObject private var appState: AppState
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 16) {
+                    HomeHeaderView(
+                        greeting: viewModel.greeting,
+                        userName: viewModel.userProfile.name,
+                        profileImageData: viewModel.profileImageData
+                    )
+                    CalendarStripView(
+                        selectedDate: $viewModel.selectedDate,
+                        datesWithLogs: viewModel.datesWithLogs
+                    )
+                    CalorieArcView(
+                        consumed: viewModel.caloriesConsumed,
+                        goal: viewModel.calorieGoal
+                    )
+                    HomeMacroRingsView(
+                        totalMacros: viewModel.dailyLog.totalMacros,
+                        proteinGoal: viewModel.userProfile.dailyProteinGoal,
+                        carbsGoal: viewModel.userProfile.dailyCarbsGoal,
+                        fatGoal: viewModel.userProfile.dailyFatGoal
+                    )
+                    HomeMealsSectionView(
+                        entries: viewModel.dailyLog.entries,
+                        onDelete: { id in await viewModel.deleteEntry(id: id) }
+                    )
+                    Spacer().frame(height: 100)
+                }
+                .padding(.top, 8)
+            }
+            .refreshable { await viewModel.loadLog() }
+            .background(AppConstants.Colors.backgroundPrimary)
+            .toolbar(.hidden, for: .navigationBar)
+            .sheet(isPresented: $viewModel.showManualEntry) {
+                ManualEntryView { entry in
+                    Task { await viewModel.saveEntry(entry) }
+                }
+            }
+        }
+        .onChange(of: appState.selectedTab) { _, newTab in
+            if newTab == "home" {
+                viewModel.onTabBecameActive()
+            }
+        }
+        .alert("Error", isPresented: Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { if !$0 { viewModel.errorMessage = nil } }
+        )) {
+            Button("OK") { viewModel.errorMessage = nil }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
+    }
+
+}
+
+// MARK: - Preview
+
+#Preview {
+    HomeView()
+        .environmentObject(HomeViewModel())
+        .environmentObject(AppState())
+}

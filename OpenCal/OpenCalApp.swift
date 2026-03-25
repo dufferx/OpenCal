@@ -6,12 +6,22 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct OpenCalApp: App {
+    @StateObject private var appState = AppState()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if appState.hasCompletedOnboarding {
+                AppRootView()
+                    .environmentObject(appState)
+                    .modelContainer(ModelContainer.shared)
+            } else {
+                OnboardingContainerView()
+                    .environmentObject(appState)
+            }
         }
     }
 }
