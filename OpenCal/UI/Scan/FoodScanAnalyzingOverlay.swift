@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct FoodScanAnalyzingOverlay: View {
-    @ObservedObject var viewModel: FoodScanViewModel
+    var viewModel: FoodScanViewModel
 
     var body: some View {
         Group {

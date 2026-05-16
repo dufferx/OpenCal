@@ -1,12 +1,11 @@
 import SwiftUI
 
 struct FoodScanShutterButton: View {
-    @ObservedObject var viewModel: FoodScanViewModel
+    let isCapturing: Bool
+    let onCapture: () -> Void
 
     var body: some View {
-        Button {
-            viewModel.showCamera = true
-        } label: {
+        Button(action: onCapture) {
             ZStack {
                 Circle()
                     .fill(Color.white)
@@ -14,8 +13,14 @@ struct FoodScanShutterButton: View {
                 Circle()
                     .stroke(Color.white.opacity(0.4), lineWidth: 4)
                     .frame(width: 84, height: 84)
+                if isCapturing {
+                    ProgressView()
+                        .tint(.black)
+                        .scaleEffect(1.3)
+                }
             }
         }
+        .disabled(isCapturing)
         .padding(.bottom, 64)
     }
 }

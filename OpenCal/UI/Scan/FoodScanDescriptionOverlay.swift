@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct FoodScanDescriptionOverlay: View {
-    @ObservedObject var viewModel: FoodScanViewModel
+    var viewModel: FoodScanViewModel
     @Binding var localDescription: String
     @FocusState.Binding var descriptionFocused: Bool
     let onDismiss: () -> Void

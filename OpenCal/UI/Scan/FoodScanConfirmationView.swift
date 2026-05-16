@@ -4,7 +4,7 @@ struct FoodScanConfirmationView: View {
     let entry: FoodEntry
     let result: FoodAnalysisResult
     let originalImage: UIImage?
-    @ObservedObject var viewModel: FoodScanViewModel
+    var viewModel: FoodScanViewModel
     @Environment(\.dismiss) private var dismiss
 
     // Editable state — user can adjust before saving
