@@ -5,7 +5,6 @@ struct AvatarPicker: View {
     let size: CGFloat
     @Binding var imageData: Data?
     @State private var selectedPhoto: PhotosPickerItem? = nil
-    private let iconScaleRatio: CGFloat = 0.4
 
     var body: some View {
         PhotosPicker(selection: $selectedPhoto, matching: .images) {

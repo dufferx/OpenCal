@@ -120,11 +120,11 @@ struct ProfileView: View {
     }
 
     private var dailyGoalsSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppConstants.Spacing.cardPadding) {
             Button {
                 viewModel.showGoalPicker = true
             } label: {
-                HStack(spacing: 6) {
+                HStack(spacing: AppConstants.Spacing.macroRingLineWidth) {
                     Text("✨")
                     Text("Help me set these")
                         .font(.headline)
@@ -136,7 +136,7 @@ struct ProfileView: View {
             }
             .buttonStyle(.plain)
 
-            LazyVGrid(columns: columns, spacing: 16) {
+            LazyVGrid(columns: columns, spacing: AppConstants.Spacing.gridItemSpacing) {
                 MacroCellView(label: "Calories", text: $viewModel.calorieGoal, unit: "kcal")
                 MacroCellView(label: "Protein", text: $viewModel.proteinGoal, unit: "g")
                 MacroCellView(label: "Carbs", text: $viewModel.carbsGoal, unit: "g")
@@ -146,7 +146,7 @@ struct ProfileView: View {
     }
 
     private var aiProviderSection: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: AppConstants.Spacing.providerSpacing) {
             ProviderCard(
                 title: "OpenAI",
                 subtitle: "GPT-4o Vision",
@@ -168,7 +168,7 @@ struct ProfileView: View {
     }
 
     private var apiKeySection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: AppConstants.Spacing.labelSpacing) {
             Text("API Key")
                 .font(AppConstants.Typography.macroLabel)
                 .foregroundStyle(AppConstants.Colors.textSecondary)
@@ -218,7 +218,7 @@ struct ProfileView: View {
 
     private var rowDivider: some View {
         Divider()
-            .padding(.leading, 56)
+            .padding(.leading, AppConstants.Spacing.formRowIndent)
     }
 }
 

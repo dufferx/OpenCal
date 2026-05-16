@@ -70,6 +70,9 @@ enum AppConstants {
         static let buttonCornerRadius: CGFloat = 28
         static let gridItemSpacing: CGFloat = 16
         static let textFieldPadding: CGFloat = 14
+        static let providerSpacing: CGFloat = 12
+        static let labelSpacing: CGFloat = 8
+        static let formRowIndent: CGFloat = 56
         static let mealCardHeight: CGFloat = 122
         static let mealImageSize: CGFloat = 110
         static let mealImageCornerRadius: CGFloat = 16
