@@ -8,10 +8,17 @@ struct FormRow<Field: View>: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.system(size: 16))
-                .foregroundStyle(AppConstants.Colors.textPrimary)
-                .frame(width: 32, height: 32)
+            Group {
+                if icon.contains(".") {
+                    Image(systemName: icon)
+                } else {
+                    Image(icon)
+                        .renderingMode(.template)
+                }
+            }
+            .font(.system(size: 16))
+            .foregroundStyle(AppConstants.Colors.textPrimary)
+            .frame(width: 32, height: 32)
 
             Text(label)
                 .font(AppConstants.Typography.macroLabel)

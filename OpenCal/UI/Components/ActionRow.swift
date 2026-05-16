@@ -8,36 +8,39 @@ struct ActionRow: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 16) {
+            HStack(spacing: 14) {
                 iconView
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(title)
                         .font(AppConstants.Typography.mealTitle)
                         .foregroundStyle(AppConstants.Colors.textPrimary)
+                        .lineLimit(1)
 
                     Text(subtitle)
                         .font(AppConstants.Typography.mealSubtitle)
                         .foregroundStyle(AppConstants.Colors.textSecondary)
+                        .lineLimit(2)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(AppConstants.Colors.textTertiary)
             }
-            .padding(16)
-            .glassEffect(in: RoundedRectangle(cornerRadius: AppConstants.Spacing.cardCornerRadius))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
 
     private var iconView: some View {
         Image(systemName: icon)
-            .font(.system(size: 22))
+            .font(.system(size: 18, weight: .semibold))
             .foregroundStyle(AppConstants.Colors.textPrimary)
-            .frame(width: 44, height: 44)
+            .frame(width: 40, height: 40)
             .background(AppConstants.Colors.backgroundSecondary)
             .clipShape(RoundedRectangle(cornerRadius: 12))
     }

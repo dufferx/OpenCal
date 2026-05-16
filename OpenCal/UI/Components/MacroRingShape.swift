@@ -28,9 +28,16 @@ struct MacroRingShape: View {
                 )
                 .rotationEffect(.degrees(-90))
 
-            Image(systemName: icon)
-                .font(.system(size: 22))
-                .foregroundStyle(AppConstants.Colors.textPrimary)
+            Group {
+                if icon.contains(".") {
+                    Image(systemName: icon)
+                } else {
+                    Image(icon)
+                        .renderingMode(.template)
+                }
+            }
+            .font(.system(size: 22))
+            .foregroundStyle(AppConstants.Colors.textPrimary)
         }
         .frame(
             width: AppConstants.Spacing.macroRingSize,

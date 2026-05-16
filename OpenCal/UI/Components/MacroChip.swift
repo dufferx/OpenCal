@@ -7,12 +7,19 @@ struct MacroChip: View {
 
     var body: some View {
         HStack(spacing: 2) {
-            Image(systemName: icon)
-                .font(AppConstants.Typography.macroGoal)
-                .foregroundStyle(AppConstants.Colors.textSecondary)
+            Group {
+                if icon.contains(".") {
+                    Image(systemName: icon)
+                } else {
+                    Image(icon)
+                        .renderingMode(.template)
+                }
+            }
+            .font(.system(size: 16))
+            .foregroundStyle(AppConstants.Colors.textSecondary)
 
             Text("\(Int(value))\(unit)")
-                .font(AppConstants.Typography.macroGoal)
+                .font(.system(size: 14))
                 .foregroundStyle(AppConstants.Colors.textSecondary)
         }
     }
