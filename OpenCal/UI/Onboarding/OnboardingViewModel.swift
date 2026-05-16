@@ -55,7 +55,9 @@ import Observation
         UserProfile(
             id: UUID(),
             name: name.trimmingCharacters(in: .whitespaces),
-            age: Calendar.current.dateComponents([.year], from: birthDate, to: Date()).year ?? 25,
+            birthDate: birthDate,
+            biologicalSex: biologicalSex,
+            apiProvider: apiProvider,
             heightCm: Double(heightCm) ?? 0,
             weightKg: Double(weightKg) ?? 0,
             dailyCalorieGoal: Double(calorieGoal) ?? 2000,

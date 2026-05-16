@@ -1,13 +1,13 @@
 import Foundation
 
-enum BiologicalSex: String, CaseIterable, Identifiable {
+enum BiologicalSex: String, CaseIterable, Identifiable, Codable {
     case male = "Male"
     case female = "Female"
     case other = "Other"
     var id: String { rawValue }
 }
 
-enum FitnessGoal: String, CaseIterable, Identifiable {
+enum FitnessGoal: String, CaseIterable, Identifiable, Codable {
     case lose = "Lose weight"
     case maintain = "Maintain weight"
     case gain = "Gain muscle"
@@ -35,7 +35,7 @@ enum FitnessGoal: String, CaseIterable, Identifiable {
     }
 }
 
-enum AIProvider: String, CaseIterable, Identifiable {
+enum AIProvider: String, CaseIterable, Identifiable, Codable {
     case openAI = "OpenAI"
     case gemini = "Gemini"
     var id: String { rawValue }

@@ -10,6 +10,7 @@ import Observation
     var profileImageData: Data? = nil
     var datesWithLogs: Set<DateComponents> = []
     var showManualEntry: Bool = false
+    var showProfile: Bool = false
     var isLoading: Bool = false
     var errorMessage: String? = nil
 

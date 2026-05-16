@@ -4,6 +4,7 @@ struct HomeHeaderView: View {
     let greeting: String
     let userName: String
     let profileImageData: Data?
+    let onAvatarTap: () -> Void
 
     var body: some View {
         HStack(alignment: .center) {
@@ -19,7 +20,10 @@ struct HomeHeaderView: View {
 
             Spacer()
 
-            avatarView
+            Button(action: onAvatarTap) {
+                avatarView
+            }
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, AppConstants.Spacing.screenHorizontal)
     }

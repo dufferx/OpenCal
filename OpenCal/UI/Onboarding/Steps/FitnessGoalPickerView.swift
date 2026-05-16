@@ -2,7 +2,8 @@ import SwiftUI
 
 struct FitnessGoalPickerView: View {
 
-    var viewModel: OnboardingViewModel
+    let selectedGoal: FitnessGoal
+    let onSelect: (FitnessGoal) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -24,15 +25,10 @@ struct FitnessGoalPickerView: View {
 
     @ViewBuilder
     private func goalCard(_ goal: FitnessGoal) -> some View {
-        let isSelected = viewModel.fitnessGoal == goal
+        let isSelected = selectedGoal == goal
 
         Button {
-            viewModel.fitnessGoal    = goal
-            viewModel.calorieGoal    = goal.defaultCalories
-            viewModel.proteinGoal    = goal.defaultProtein
-            viewModel.carbsGoal      = goal.defaultCarbs
-            viewModel.fatGoal        = goal.defaultFat
-            viewModel.showGoalPicker = false
+            onSelect(goal)
         } label: {
             HStack(spacing: 16) {
                 Image(systemName: goal.icon)

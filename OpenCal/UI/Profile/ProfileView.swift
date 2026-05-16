@@ -1,13 +1,228 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @State private var viewModel = ProfileViewModel()
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
+
+    private let columns = [
+        GridItem(.flexible(), spacing: 16),
+        GridItem(.flexible(), spacing: 16)
+    ]
+
     var body: some View {
-        Text("Profile")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 24) {
+                    avatarSection
+                    nameCard
+                    bodyStatsCard
+                    dailyGoalsSection
+                    aiProviderSection
+                    apiKeySection
+                    saveButton
+                }
+                .padding(.horizontal, AppConstants.Spacing.screenHorizontal)
+                .padding(.top, 16)
+                .padding(.bottom, 32)
+            }
+            .background(AppConstants.Colors.backgroundPrimary)
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                        .foregroundStyle(AppConstants.Colors.textPrimary)
+                }
+            }
+        }
+        .task {
+            await viewModel.loadProfile()
+        }
+        .sheet(isPresented: $viewModel.showGoalPicker) {
+            FitnessGoalPickerView(
+                selectedGoal: viewModel.fitnessGoal,
+                onSelect: { goal in
+                    viewModel.applyFitnessGoal(goal)
+                    viewModel.showGoalPicker = false
+                }
+            )
+        }
+    }
+
+    // MARK: - Sections
+
+    private var avatarSection: some View {
+        AvatarPicker(size: 100, imageData: $viewModel.profileImageData)
+            .frame(maxWidth: .infinity)
+    }
+
+    private var nameCard: some View {
+        VStack(spacing: 0) {
+            FormRow(icon: "person.fill", label: "Name") {
+                TextField("Your name", text: $viewModel.name)
+                    .textInputAutocapitalization(.words)
+                    .autocorrectionDisabled()
+            }
+        }
+        .background(AppConstants.Colors.backgroundCard)
+        .clipShape(RoundedRectangle(cornerRadius: AppConstants.Spacing.cardCornerRadius))
+    }
+
+    private var bodyStatsCard: some View {
+        VStack(spacing: 0) {
+            FormRow(icon: "calendar", label: "Birth Date") {
+                DatePicker(
+                    "",
+                    selection: $viewModel.birthDate,
+                    displayedComponents: .date
+                )
+                .labelsHidden()
+            }
+
+            rowDivider
+
+            FormRow(icon: "person.2.fill", label: "Sex") {
+                Picker("", selection: $viewModel.biologicalSex) {
+                    ForEach(BiologicalSex.allCases) { sex in
+                        Text(sex.rawValue).tag(sex)
+                    }
+                }
+                .labelsHidden()
+            }
+
+            rowDivider
+
+            FormRow(icon: "ruler.fill", label: "Height") {
+                HStack(spacing: 4) {
+                    TextField("0", text: $viewModel.heightCm)
+                        .keyboardType(.decimalPad)
+                    Text("cm")
+                        .font(AppConstants.Typography.macroGoal)
+                        .foregroundStyle(AppConstants.Colors.textTertiary)
+                }
+            }
+
+            rowDivider
+
+            FormRow(icon: "scalemass.fill", label: "Weight") {
+                HStack(spacing: 4) {
+                    TextField("0", text: $viewModel.weightKg)
+                        .keyboardType(.decimalPad)
+                    Text("kg")
+                        .font(AppConstants.Typography.macroGoal)
+                        .foregroundStyle(AppConstants.Colors.textTertiary)
+                }
+            }
+        }
+        .background(AppConstants.Colors.backgroundCard)
+        .clipShape(RoundedRectangle(cornerRadius: AppConstants.Spacing.cardCornerRadius))
+    }
+
+    private var dailyGoalsSection: some View {
+        VStack(spacing: 16) {
+            Button {
+                viewModel.showGoalPicker = true
+            } label: {
+                HStack(spacing: 6) {
+                    Text("✨")
+                    Text("Help me set these")
+                        .font(.system(size: 17, weight: .semibold))
+                }
+                .foregroundStyle(AppConstants.Colors.textPrimary)
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
+                .background(AppConstants.Colors.backgroundSecondary, in: RoundedRectangle(cornerRadius: 28))
+            }
+            .buttonStyle(.plain)
+
+            LazyVGrid(columns: columns, spacing: 16) {
+                MacroCellView(label: "Calories", text: $viewModel.calorieGoal, unit: "kcal")
+                MacroCellView(label: "Protein", text: $viewModel.proteinGoal, unit: "g")
+                MacroCellView(label: "Carbs", text: $viewModel.carbsGoal, unit: "g")
+                MacroCellView(label: "Fat", text: $viewModel.fatGoal, unit: "g")
+            }
+        }
+    }
+
+    private var aiProviderSection: some View {
+        VStack(spacing: 12) {
+            ProviderCard(
+                title: "OpenAI",
+                subtitle: "GPT-4o Vision",
+                provider: .openAI,
+                selected: viewModel.apiProvider == .openAI
+            ) {
+                viewModel.apiProvider = .openAI
+            }
+
+            ProviderCard(
+                title: "Gemini",
+                subtitle: "Gemini 1.5 Pro",
+                provider: .gemini,
+                selected: viewModel.apiProvider == .gemini
+            ) {
+                viewModel.apiProvider = .gemini
+            }
+        }
+    }
+
+    private var apiKeySection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("API Key")
+                .font(AppConstants.Typography.macroLabel)
+                .foregroundStyle(AppConstants.Colors.textSecondary)
+
+            SecureField("Paste your key here", text: $viewModel.apiKey)
+                .textContentType(.password)
+                .autocorrectionDisabled()
+                .padding(14)
+                .background(
+                    AppConstants.Colors.backgroundSecondary,
+                    in: RoundedRectangle(cornerRadius: 14)
+                )
+
+            Button {
+                let url: URL?
+                switch viewModel.apiProvider {
+                case .openAI:
+                    url = URL(string: "https://platform.openai.com/api-keys")
+                case .gemini:
+                    url = URL(string: "https://aistudio.google.com/apikey")
+                }
+                if let url { openURL(url) }
+            } label: {
+                Text("How to get an API key →")
+                    .font(AppConstants.Typography.macroGoal)
+                    .foregroundStyle(.blue)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private var saveButton: some View {
+        Button {
+            Task {
+                await viewModel.save()
+                dismiss()
+            }
+        } label: {
+            Text("Save Changes")
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(AppConstants.Colors.ringFilled)
+        .controlSize(.large)
+        .disabled(!viewModel.isValid || viewModel.isSaving)
+    }
+
+    private var rowDivider: some View {
+        Divider()
+            .padding(.leading, 56)
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     NavigationStack {

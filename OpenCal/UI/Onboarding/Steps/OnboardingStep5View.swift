@@ -120,7 +120,17 @@ struct OnboardingStep5View: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppConstants.Colors.backgroundPrimary.ignoresSafeArea())
         .sheet(isPresented: $viewModel.showGoalPicker) {
-            FitnessGoalPickerView(viewModel: viewModel)
+            FitnessGoalPickerView(
+                selectedGoal: viewModel.fitnessGoal,
+                onSelect: { goal in
+                    viewModel.fitnessGoal = goal
+                    viewModel.calorieGoal = goal.defaultCalories
+                    viewModel.proteinGoal = goal.defaultProtein
+                    viewModel.carbsGoal = goal.defaultCarbs
+                    viewModel.fatGoal = goal.defaultFat
+                    viewModel.showGoalPicker = false
+                }
+            )
         }
         .onChange(of: viewModel.showGoalPicker) { _, isShowing in
             if !isShowing {

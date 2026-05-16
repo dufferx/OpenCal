@@ -12,7 +12,8 @@ struct HomeView: View {
                     HomeHeaderView(
                         greeting: viewModel.greeting,
                         userName: viewModel.userProfile.name,
-                        profileImageData: viewModel.profileImageData
+                        profileImageData: viewModel.profileImageData,
+                        onAvatarTap: { viewModel.showProfile = true }
                     )
                     CalendarStripView(
                         selectedDate: $viewModel.selectedDate,
@@ -43,6 +44,9 @@ struct HomeView: View {
                 ManualEntryView { entry in
                     Task { await viewModel.saveEntry(entry) }
                 }
+            }
+            .sheet(isPresented: $viewModel.showProfile, onDismiss: viewModel.reloadProfile) {
+                ProfileView()
             }
         }
         .onChange(of: appState.selectedTab) { _, newTab in
