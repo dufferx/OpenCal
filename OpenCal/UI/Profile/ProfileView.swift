@@ -20,7 +20,6 @@ struct ProfileView: View {
                     dailyGoalsSection
                     aiProviderSection
                     apiKeySection
-                    saveButton
                 }
                 .padding(.horizontal, AppConstants.Spacing.screenHorizontal)
                 .padding(.top, AppConstants.Spacing.cardPadding)
@@ -34,6 +33,19 @@ struct ProfileView: View {
                     Button("Done") { dismiss() }
                         .foregroundStyle(AppConstants.Colors.textPrimary)
                 }
+                ToolbarItem(placement: .status) {
+                    Group {
+                        if viewModel.isSaving {
+                            Text("Saving...")
+                                .font(AppConstants.Typography.macroGoal)
+                                .foregroundStyle(AppConstants.Colors.textSecondary)
+                        } else if viewModel.didSaveSuccessfully {
+                            Text("Saved")
+                                .font(AppConstants.Typography.macroGoal)
+                                .foregroundStyle(.green)
+                        }
+                    }
+                }
             }
         }
         .task {
@@ -45,9 +57,26 @@ struct ProfileView: View {
                 onSelect: { goal in
                     viewModel.applyFitnessGoal(goal)
                     viewModel.showGoalPicker = false
+                    Task { await viewModel.save() }
                 }
             )
         }
+        .onDisappear {
+            Task { await viewModel.save() }
+        }
+        // Auto-save watchers
+        .onChange(of: viewModel.name) { _, _ in viewModel.scheduleSave() }
+        .onChange(of: viewModel.birthDate) { _, _ in viewModel.scheduleSave() }
+        .onChange(of: viewModel.biologicalSex) { _, _ in viewModel.scheduleSave() }
+        .onChange(of: viewModel.heightCm) { _, _ in viewModel.scheduleSave() }
+        .onChange(of: viewModel.weightKg) { _, _ in viewModel.scheduleSave() }
+        .onChange(of: viewModel.calorieGoal) { _, _ in viewModel.scheduleSave() }
+        .onChange(of: viewModel.proteinGoal) { _, _ in viewModel.scheduleSave() }
+        .onChange(of: viewModel.carbsGoal) { _, _ in viewModel.scheduleSave() }
+        .onChange(of: viewModel.fatGoal) { _, _ in viewModel.scheduleSave() }
+        .onChange(of: viewModel.apiProvider) { _, _ in Task { await viewModel.save() } }
+        .onChange(of: viewModel.apiKey) { _, _ in viewModel.scheduleSave() }
+        .onChange(of: viewModel.profileImageData) { _, _ in Task { await viewModel.save() } }
     }
 
     // MARK: - Sections
@@ -198,22 +227,6 @@ struct ProfileView: View {
             }
             .buttonStyle(.plain)
         }
-    }
-
-    private var saveButton: some View {
-        Button {
-            Task {
-                await viewModel.save()
-                dismiss()
-            }
-        } label: {
-            Text("Save Changes")
-                .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.borderedProminent)
-        .tint(AppConstants.Colors.ringFilled)
-        .controlSize(.large)
-        .disabled(!viewModel.isValid || viewModel.isSaving)
     }
 
     private var rowDivider: some View {

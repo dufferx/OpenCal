@@ -21,6 +21,9 @@ import Observation
     var apiKey: String = ""
     var showGoalPicker: Bool = false
     var isSaving: Bool = false
+    var didSaveSuccessfully: Bool = false
+
+    private var saveTask: Task<Void, Never>?
 
     init(repository: UserProfileRepositoryProtocol = UserProfileRepository()) {
         self.repository = repository
@@ -58,6 +61,15 @@ import Observation
         && (Double(calorieGoal) ?? 0) > 0
     }
 
+    func scheduleSave() {
+        saveTask?.cancel()
+        saveTask = Task {
+            try? await Task.sleep(for: .seconds(0.6))
+            guard !Task.isCancelled else { return }
+            await save()
+        }
+    }
+
     func save() async {
         guard isValid else { return }
         await MainActor.run { isSaving = true }
@@ -71,7 +83,17 @@ import Observation
         } else {
             KeychainHelper.save(apiKey, for: AppConstants.Keychain.apiKeyIdentifier)
         }
-        await MainActor.run { isSaving = false }
+        await MainActor.run {
+            isSaving = false
+            didSaveSuccessfully = true
+            // Reset the success indicator after a moment
+            Task {
+                try? await Task.sleep(for: .seconds(2))
+                if !Task.isCancelled {
+                    didSaveSuccessfully = false
+                }
+            }
+        }
     }
 
     func applyFitnessGoal(_ goal: FitnessGoal) {
