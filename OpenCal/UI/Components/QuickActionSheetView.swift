@@ -4,10 +4,12 @@ struct QuickActionSheetView: View {
     var onScanFood: (() -> Void)? = nil
     var onScanLabel: (() -> Void)? = nil
     var onManualEntry: (() -> Void)? = nil
+    var onOpenFoodLog: (() -> Void)? = nil
     var onSaveEntry: ((FoodEntry) -> Void)? = nil
 
-    @EnvironmentObject private var appState: AppState
-    @StateObject private var scanViewModel = FoodScanViewModel(repository: FoodRepository())
+    @Environment(AppState.self) private var appState
+    @Environment(\.dismiss) private var dismiss
+    @State private var scanViewModel = FoodScanViewModel(repository: FoodRepository())
     @State private var showManualEntry = false
     @State private var showFoodScanCamera = false
     @State private var showScanning = false
@@ -16,17 +18,29 @@ struct QuickActionSheetView: View {
     // MARK: - Body
 
     var body: some View {
-        VStack(spacing: 24) {
-            header
-            actions
-            Spacer()
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    header
+                    actionsCard
+                }
+                .padding(.horizontal, AppConstants.Spacing.screenHorizontal)
+                .padding(.top, 12)
+                .padding(.bottom, 28)
+            }
+            .background(AppConstants.Colors.backgroundPrimary)
+            .navigationTitle("Add Food")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                        .foregroundStyle(AppConstants.Colors.textSecondary)
+                }
+            }
         }
-        .padding(.horizontal, AppConstants.Spacing.screenHorizontal)
-        .padding(.top, 24)
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
         .presentationCornerRadius(32)
         .presentationDragIndicator(.visible)
-        .presentationBackground(.clear)
         .onAppear {
             scanViewModel.appState = appState
         }
@@ -81,59 +95,110 @@ struct QuickActionSheetView: View {
     // MARK: - Header
 
     private var header: some View {
-        VStack(spacing: 6) {
-            Text("Add Food")
-                .font(AppConstants.Typography.userName)
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Quick add")
+                .font(AppConstants.Typography.mealTitle)
                 .foregroundStyle(AppConstants.Colors.textPrimary)
 
-            Text("How do you want to log?")
+            Text("Choose how you want to log this meal.")
                 .font(AppConstants.Typography.mealSubtitle)
                 .foregroundStyle(AppConstants.Colors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .frame(maxWidth: .infinity)
-        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: - Actions
 
-    private var actions: some View {
-        VStack(spacing: 12) {
+    private var actionsCard: some View {
+        VStack(spacing: 0) {
             ActionRow(
                 icon: "camera.fill",
                 title: "Scan Food",
                 subtitle: "Take a photo of your meal"
             ) {
-                if let onScanFood {
-                    onScanFood()
-                } else {
-                    showFoodScanCamera = true
-                }
+                handleScanFood()
             }
+
+            rowDivider
 
             ActionRow(
                 icon: "barcode.viewfinder",
                 title: "Scan Label",
                 subtitle: "Scan a nutrition label"
             ) {
-                if let onScanLabel {
-                    onScanLabel()
-                } else {
-                    print("Scan Label tapped")
-                }
+                handleScanLabel()
             }
+
+            rowDivider
 
             ActionRow(
                 icon: "square.and.pencil",
                 title: "Manual Entry",
                 subtitle: "Enter macros manually"
             ) {
-                if let onManualEntry {
-                    onManualEntry()
-                } else {
-                    showManualEntry = true
-                }
+                handleManualEntry()
+            }
+
+            rowDivider
+
+            ActionRow(
+                icon: "clock.arrow.circlepath",
+                title: "From Food Log",
+                subtitle: "Add a meal you logged before"
+            ) {
+                handleOpenFoodLog()
             }
         }
+        .background(AppConstants.Colors.backgroundCard)
+        .clipShape(RoundedRectangle(cornerRadius: AppConstants.Spacing.cardCornerRadius))
+        .shadow(
+            color: AppConstants.Shadow.cardColor.opacity(0.08),
+            radius: 12,
+            x: 0,
+            y: 6
+        )
+    }
+
+    private var rowDivider: some View {
+        Divider()
+            .padding(.leading, 76)
+    }
+
+    // MARK: - Actions
+
+    private func handleScanFood() {
+        if let onScanFood {
+            onScanFood()
+        } else {
+            showFoodScanCamera = true
+        }
+    }
+
+    private func handleScanLabel() {
+        if let onScanLabel {
+            onScanLabel()
+        } else {
+            print("Scan Label tapped")
+        }
+    }
+
+    private func handleManualEntry() {
+        if let onManualEntry {
+            onManualEntry()
+        } else {
+            showManualEntry = true
+        }
+    }
+
+    private func handleOpenFoodLog() {
+        if let onOpenFoodLog {
+            onOpenFoodLog()
+        } else {
+            appState.selectedTab = .foodLog
+        }
+
+        dismiss()
     }
 }
 
@@ -141,5 +206,5 @@ struct QuickActionSheetView: View {
 
 #Preview {
     QuickActionSheetView()
-        .environmentObject(AppState())
+        .environment(AppState())
 }
