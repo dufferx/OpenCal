@@ -5,9 +5,10 @@ import Observation
 
     private let repository: UserProfileRepositoryProtocol
 
+    private var profileId: UUID = UUID()
     var name: String = ""
     var profileImageData: Data? = nil
-    var birthDate: Date = Calendar.current.date(byAdding: .year, value: -25, to: Date()) ?? Date()
+    var birthDate: Date = Calendar.current.date(byAdding: .year, value: -AppConstants.Defaults.ageOffset, to: Date()) ?? Date()
     var biologicalSex: BiologicalSex = .male
     var heightCm: String = ""
     var weightKg: String = ""
@@ -39,6 +40,7 @@ import Observation
     }
 
     func hydrate(from profile: UserProfile) {
+        profileId = profile.id
         name = profile.name
         birthDate = profile.birthDate
         biologicalSex = profile.biologicalSex
@@ -82,17 +84,17 @@ import Observation
 
     private func buildUserProfile() -> UserProfile {
         UserProfile(
-            id: UUID(),
+            id: profileId,
             name: name.trimmingCharacters(in: .whitespaces),
             birthDate: birthDate,
             biologicalSex: biologicalSex,
             apiProvider: apiProvider,
             heightCm: Double(heightCm) ?? 0,
             weightKg: Double(weightKg) ?? 0,
-            dailyCalorieGoal: Double(calorieGoal) ?? 2000,
-            dailyProteinGoal: Double(proteinGoal) ?? 150,
-            dailyCarbsGoal: Double(carbsGoal) ?? 200,
-            dailyFatGoal: Double(fatGoal) ?? 65
+            dailyCalorieGoal: Double(calorieGoal) ?? AppConstants.Defaults.dailyCalorieGoal,
+            dailyProteinGoal: Double(proteinGoal) ?? AppConstants.Defaults.dailyProteinGoal,
+            dailyCarbsGoal: Double(carbsGoal) ?? AppConstants.Defaults.dailyCarbsGoal,
+            dailyFatGoal: Double(fatGoal) ?? AppConstants.Defaults.dailyFatGoal
         )
     }
 }

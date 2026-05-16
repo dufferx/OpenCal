@@ -48,7 +48,7 @@ struct UserProfile: Codable, Equatable {
         id = try container.decode(UUID.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         birthDate = try container.decodeIfPresent(Date.self, forKey: .birthDate)
-            ?? Calendar.current.date(byAdding: .year, value: -25, to: Date())
+            ?? Calendar.current.date(byAdding: .year, value: -AppConstants.Defaults.ageOffset, to: Date())
             ?? Date()
         biologicalSex = try container.decodeIfPresent(BiologicalSex.self, forKey: .biologicalSex)
             ?? .male

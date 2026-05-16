@@ -6,14 +6,14 @@ struct ProfileView: View {
     @Environment(\.openURL) private var openURL
 
     private let columns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
+        GridItem(.flexible(), spacing: AppConstants.Spacing.gridItemSpacing),
+        GridItem(.flexible(), spacing: AppConstants.Spacing.gridItemSpacing)
     ]
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: AppConstants.Spacing.sectionSpacing) {
                     avatarSection
                     nameCard
                     bodyStatsCard
@@ -23,8 +23,8 @@ struct ProfileView: View {
                     saveButton
                 }
                 .padding(.horizontal, AppConstants.Spacing.screenHorizontal)
-                .padding(.top, 16)
-                .padding(.bottom, 32)
+                .padding(.top, AppConstants.Spacing.cardPadding)
+                .padding(.bottom, AppConstants.Spacing.sectionSpacing)
             }
             .background(AppConstants.Colors.backgroundPrimary)
             .navigationTitle("Profile")
@@ -53,7 +53,7 @@ struct ProfileView: View {
     // MARK: - Sections
 
     private var avatarSection: some View {
-        AvatarPicker(size: 100, imageData: $viewModel.profileImageData)
+        AvatarPicker(size: AppConstants.Spacing.profileAvatarSize, imageData: $viewModel.profileImageData)
             .frame(maxWidth: .infinity)
     }
 
@@ -127,12 +127,12 @@ struct ProfileView: View {
                 HStack(spacing: 6) {
                     Text("✨")
                     Text("Help me set these")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.headline)
                 }
                 .foregroundStyle(AppConstants.Colors.textPrimary)
                 .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .background(AppConstants.Colors.backgroundSecondary, in: RoundedRectangle(cornerRadius: 28))
+                .frame(height: AppConstants.Spacing.buttonHeight)
+                .background(AppConstants.Colors.backgroundSecondary, in: RoundedRectangle(cornerRadius: AppConstants.Spacing.buttonCornerRadius))
             }
             .buttonStyle(.plain)
 
@@ -176,10 +176,10 @@ struct ProfileView: View {
             SecureField("Paste your key here", text: $viewModel.apiKey)
                 .textContentType(.password)
                 .autocorrectionDisabled()
-                .padding(14)
+                .padding(AppConstants.Spacing.textFieldPadding)
                 .background(
                     AppConstants.Colors.backgroundSecondary,
-                    in: RoundedRectangle(cornerRadius: 14)
+                    in: RoundedRectangle(cornerRadius: AppConstants.Spacing.cardCornerRadius)
                 )
 
             Button {

@@ -5,6 +5,7 @@ struct AvatarPicker: View {
     let size: CGFloat
     @Binding var imageData: Data?
     @State private var selectedPhoto: PhotosPickerItem? = nil
+    private let iconScaleRatio: CGFloat = 0.4
 
     var body: some View {
         PhotosPicker(selection: $selectedPhoto, matching: .images) {
@@ -21,11 +22,12 @@ struct AvatarPicker: View {
                         .fill(AppConstants.Colors.backgroundSecondary)
                         .frame(width: size, height: size)
                     Image(systemName: "person.fill")
-                        .font(.system(size: size * 0.4))
+                        .font(.title3)
                         .foregroundStyle(AppConstants.Colors.textSecondary)
                 }
             }
         }
+        .accessibilityLabel("Change profile photo")
         .onChange(of: selectedPhoto) { _, newItem in
             Task {
                 if let data = try? await newItem?.loadTransferable(type: Data.self) {

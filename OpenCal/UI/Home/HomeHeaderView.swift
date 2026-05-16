@@ -23,6 +23,7 @@ struct HomeHeaderView: View {
             Button(action: onAvatarTap) {
                 avatarView
             }
+            .accessibilityLabel("Open profile")
             .buttonStyle(.plain)
         }
         .padding(.horizontal, AppConstants.Spacing.screenHorizontal)

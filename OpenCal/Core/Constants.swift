@@ -8,6 +8,10 @@ enum AppConstants {
 
     enum Defaults {
         static let dailyCalorieGoal: Double = 2000
+        static let dailyProteinGoal: Double = 150
+        static let dailyCarbsGoal: Double = 200
+        static let dailyFatGoal: Double = 65
+        static let ageOffset: Int = 25
     }
 
     // MARK: - Colors
@@ -60,6 +64,12 @@ enum AppConstants {
         static let calorieArcLineWidth: CGFloat = 18
         static let calendarDaySize: CGFloat = 34
         static let avatarSize: CGFloat = 50
+        static let profileAvatarSize: CGFloat = 100
+        static let sectionSpacing: CGFloat = 24
+        static let buttonHeight: CGFloat = 56
+        static let buttonCornerRadius: CGFloat = 28
+        static let gridItemSpacing: CGFloat = 16
+        static let textFieldPadding: CGFloat = 14
         static let mealCardHeight: CGFloat = 122
         static let mealImageSize: CGFloat = 110
         static let mealImageCornerRadius: CGFloat = 16
