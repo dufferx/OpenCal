@@ -25,3 +25,9 @@ build/
 PROMPT.md
 REVIEW.md
 *.md
+
+# AutoDev system docs (required for agent orchestration)
+!AGENT_PROMPT.md
+!AUTOBACKLOG.md
+!AUTODEV.md
+!ORCHESTRATOR_PROMPT.md
