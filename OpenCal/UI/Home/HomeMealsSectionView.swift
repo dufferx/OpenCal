@@ -27,13 +27,12 @@ struct HomeMealsSectionView: View {
                                 }
                             }
                             .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0))
+                            .listRowSeparator(.hidden)
                     }
                 }
                 .listStyle(.plain)
                 .scrollDisabled(true)
-                .scrollContentBackground(.hidden)
                 .frame(height: CGFloat(entries.count) * (AppConstants.Spacing.mealCardHeight + 12))
             }
         }

@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct ManualEntryView: View {
-    @StateObject private var viewModel = ManualEntryViewModel()
+    @State private var viewModel = ManualEntryViewModel()
+    @State private var selectedDetent: PresentationDetent = .large
     @Environment(\.dismiss) private var dismiss
     var onSave: (FoodEntry) -> Void
 
@@ -25,7 +26,7 @@ struct ManualEntryView: View {
                 }
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.medium, .large], selection: $selectedDetent)
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(32)
     }
@@ -35,7 +36,7 @@ struct ManualEntryView: View {
     private var formCard: some View {
         VStack(spacing: 0) {
             FormRow(
-                icon: "pencil",
+                icon: "pencil.fill",
                 label: "Meal Name"
             ) {
                 TextField("Breakfast, Lunch...", text: $viewModel.mealName)
@@ -56,7 +57,7 @@ struct ManualEntryView: View {
             rowDivider
 
             FormRow(
-                icon: "fork.knife",
+                icon: "proteinIcon",
                 label: "Protein"
             ) {
                 TextField("0", value: $viewModel.protein, format: .number)
@@ -66,7 +67,7 @@ struct ManualEntryView: View {
             rowDivider
 
             FormRow(
-                icon: "takeoutbag.and.cup.and.straw.fill",
+                icon: "carbsIcon",
                 label: "Carbs"
             ) {
                 TextField("0", value: $viewModel.carbs, format: .number)
@@ -76,7 +77,7 @@ struct ManualEntryView: View {
             rowDivider
 
             FormRow(
-                icon: "drop.fill",
+                icon: "fatIcon",
                 label: "Fat"
             ) {
                 TextField("0", value: $viewModel.fat, format: .number)

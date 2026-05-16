@@ -2,8 +2,8 @@ import SwiftUI
 
 struct OnboardingContainerView: View {
 
-    @StateObject private var viewModel = OnboardingViewModel()
-    @EnvironmentObject var appState: AppState
+    @State private var viewModel = OnboardingViewModel()
+    @Environment(AppState.self) var appState
 
     var body: some View {
         ZStack {

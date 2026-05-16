@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject private var viewModel: HomeViewModel
-    @EnvironmentObject private var appState: AppState
+    @Environment(HomeViewModel.self) private var viewModel
+    @Environment(AppState.self) private var appState
 
     var body: some View {
+        @Bindable var viewModel = viewModel
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
@@ -45,7 +46,7 @@ struct HomeView: View {
             }
         }
         .onChange(of: appState.selectedTab) { _, newTab in
-            if newTab == "home" {
+            if newTab == .home {
                 viewModel.onTabBecameActive()
             }
         }
@@ -65,6 +66,6 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
-        .environmentObject(HomeViewModel())
-        .environmentObject(AppState())
+        .environment(HomeViewModel())
+        .environment(AppState())
 }

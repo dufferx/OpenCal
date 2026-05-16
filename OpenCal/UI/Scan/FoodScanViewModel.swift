@@ -1,14 +1,15 @@
 import Foundation
 import UIKit
-import Combine
+import Observation
 
 @MainActor
-class FoodScanViewModel: ObservableObject {
+@Observable
+class FoodScanViewModel {
 
     // MARK: - Camera state
-    @Published var capturedImage: UIImage? = nil
-    @Published var originalImage: UIImage? = nil  // original, uncompressed — for display
-    @Published var userDescription: String = ""
+    var capturedImage: UIImage? = nil
+    var originalImage: UIImage? = nil  // original, uncompressed — for display
+    var userDescription: String = ""
 
     // MARK: - Analysis state
     enum ScanState: Equatable {
@@ -29,13 +30,11 @@ class FoodScanViewModel: ObservableObject {
             }
         }
     }
-    @Published var scanState: ScanState = .idle
+    var scanState: ScanState = .idle
 
     // MARK: - Sheet/navigation flags
-    @Published var showCamera: Bool = false
-    @Published var showPhotoLibrary: Bool = false
-    @Published var showConfirmation: Bool = false
-    @Published var shouldDismiss: Bool = false
+    var showConfirmation: Bool = false
+    var shouldDismiss: Bool = false
 
     // MARK: - Dependencies
     private let repository: FoodRepositoryProtocol
@@ -53,9 +52,6 @@ class FoodScanViewModel: ObservableObject {
         capturedImage = image
         originalImage = image
         scanState = .reviewing
-        showCamera = false
-        showPhotoLibrary = false
-        // Description overlay appears in-place — no navigation needed
     }
 
     /// Called when the user taps "Analyze" after optionally adding description.
@@ -91,7 +87,7 @@ class FoodScanViewModel: ObservableObject {
         do {
             try await repository.saveEntry(entry, for: Date())
             onScanComplete?(entry)
-            appState?.selectedTab = "home"
+            appState?.selectedTab = .home
             shouldDismiss = true
             resetToIdle()
         } catch {
@@ -106,8 +102,7 @@ class FoodScanViewModel: ObservableObject {
         userDescription = ""
         scanState = .idle
         showConfirmation = false
-        showCamera = false
-        shouldDismiss = false  // reset so next-session retake detection works correctly
+        shouldDismiss = false
     }
 
     func resetToIdle() {
@@ -116,8 +111,6 @@ class FoodScanViewModel: ObservableObject {
         userDescription = ""
         scanState = .idle
         showConfirmation = false
-        showCamera = false
-        showPhotoLibrary = false
         // shouldDismiss is intentionally NOT reset here — it is set once in
         // confirmAndSave() and must remain true long enough for FoodScanView's
         // onChange to fire. Resetting it here would cancel the dismiss in the

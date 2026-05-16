@@ -2,7 +2,7 @@ import SwiftUI
 
 struct OnboardingStep2View: View {
 
-    @ObservedObject var viewModel: OnboardingViewModel
+    var viewModel: OnboardingViewModel
 
     var body: some View {
         ZStack {
@@ -96,6 +96,6 @@ struct OnboardingStep2View: View {
 }
 
 #Preview {
-    @Previewable @StateObject var vm = OnboardingViewModel()
+    @Previewable @State var vm = OnboardingViewModel()
     OnboardingStep2View(viewModel: vm)
 }

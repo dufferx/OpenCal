@@ -1,9 +1,17 @@
 import Foundation
-import Combine
+import Observation
 
-class AppState: ObservableObject {
-    @Published var selectedTab: String = "home"
-    @Published var hasCompletedOnboarding: Bool
+enum AppTab: String {
+    case home
+    case progress
+    case foodLog
+    case add
+}
+
+@Observable @MainActor
+final class AppState {
+    var selectedTab: AppTab = .home
+    var hasCompletedOnboarding: Bool
 
     init() {
         self.hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
@@ -11,8 +19,6 @@ class AppState: ObservableObject {
 
     func completeOnboarding() {
         UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
-        Task { @MainActor in
-            self.hasCompletedOnboarding = true
-        }
+        hasCompletedOnboarding = true
     }
 }

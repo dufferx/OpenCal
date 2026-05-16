@@ -2,7 +2,7 @@ import SwiftUI
 
 struct OnboardingStep4View: View {
 
-    @ObservedObject var viewModel: OnboardingViewModel
+    var viewModel: OnboardingViewModel
 
     @State private var isMetric: Bool = true
     @State private var heightCm: Int = 170
@@ -195,6 +195,6 @@ struct OnboardingStep4View: View {
 }
 
 #Preview {
-    @Previewable @StateObject var vm = OnboardingViewModel()
+    @Previewable @State var vm = OnboardingViewModel()
     OnboardingStep4View(viewModel: vm)
 }

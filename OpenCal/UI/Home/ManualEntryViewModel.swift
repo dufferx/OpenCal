@@ -1,12 +1,12 @@
 import Foundation
-import Combine
+import Observation
 
-class ManualEntryViewModel: ObservableObject {
-    @Published var mealName: String = ""
-    @Published var calories: Double = 0
-    @Published var protein: Double = 0
-    @Published var carbs: Double = 0
-    @Published var fat: Double = 0
+@Observable final class ManualEntryViewModel {
+    var mealName: String = ""
+    var calories: Double = 0
+    var protein: Double = 0
+    var carbs: Double = 0
+    var fat: Double = 0
 
     var isValid: Bool {
         !mealName.trimmingCharacters(in: .whitespaces).isEmpty && calories > 0

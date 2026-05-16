@@ -2,7 +2,7 @@ import SwiftUI
 
 struct OnboardingStep5View: View {
 
-    @ObservedObject var viewModel: OnboardingViewModel
+    var viewModel: OnboardingViewModel
 
     @State private var localCalorieGoal: String = ""
     @State private var localProteinGoal: String = ""
@@ -15,6 +15,7 @@ struct OnboardingStep5View: View {
     ]
 
     var body: some View {
+        @Bindable var viewModel = viewModel
         VStack(alignment: .leading, spacing: 0) {
 
             // Back button row
@@ -134,6 +135,6 @@ struct OnboardingStep5View: View {
 }
 
 #Preview {
-    @Previewable @StateObject var vm = OnboardingViewModel()
+    @Previewable @State var vm = OnboardingViewModel()
     OnboardingStep5View(viewModel: vm)
 }

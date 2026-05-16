@@ -3,7 +3,7 @@ import PhotosUI
 
 struct OnboardingStep1View: View {
 
-    @ObservedObject var viewModel: OnboardingViewModel
+    var viewModel: OnboardingViewModel
     @State private var selectedPhoto: PhotosPickerItem? = nil
     @State private var localName: String = ""
     @FocusState private var nameFocused: Bool
@@ -113,6 +113,6 @@ struct OnboardingStep1View: View {
 }
 
 #Preview {
-    @Previewable @StateObject var vm = OnboardingViewModel()
+    @Previewable @State var vm = OnboardingViewModel()
     OnboardingStep1View(viewModel: vm)
 }

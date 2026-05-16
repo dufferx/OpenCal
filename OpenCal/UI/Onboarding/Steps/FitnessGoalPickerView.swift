@@ -2,7 +2,7 @@ import SwiftUI
 
 struct FitnessGoalPickerView: View {
 
-    @ObservedObject var viewModel: OnboardingViewModel
+    var viewModel: OnboardingViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {

@@ -13,19 +13,19 @@ struct HomeMacroRingsView: View {
                     label: "Protein",
                     current: totalMacros.protein,
                     goal: proteinGoal,
-                    icon: "fork.knife"
+                    icon: "proteinIcon"
                 )
                 MacroRingView(
                     label: "Carbs",
                     current: totalMacros.carbs,
                     goal: carbsGoal,
-                    icon: "takeoutbag.and.cup.and.straw.fill"
+                    icon:"carbsIcon"
                 )
                 MacroRingView(
                     label: "Fat",
                     current: totalMacros.fat,
                     goal: fatGoal,
-                    icon: "hands.and.sparkles.fill"
+                    icon: "fatIcon"
                 )
             }
             .padding(.horizontal, AppConstants.Spacing.screenHorizontal)

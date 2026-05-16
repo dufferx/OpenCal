@@ -1,35 +1,47 @@
 import SwiftUI
-import UIKit
 import PhotosUI
-import AVFoundation
 
 struct FoodScanCameraView: View {
-    @ObservedObject var viewModel: FoodScanViewModel
+    var viewModel: FoodScanViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var camera = CameraService()
     @State private var selectedPhoto: PhotosPickerItem? = nil
     @State private var localDescription: String = ""
     @FocusState private var descriptionFocused: Bool
 
+    private var isReviewing: Bool { viewModel.capturedImage != nil }
+
     var body: some View {
+        @Bindable var viewModel = viewModel
         ZStack {
-            // 1. Live camera preview — always visible
-            CameraPreviewView()
+            // 1. Live camera preview — full screen, always visible
+            CameraPreviewView(session: camera.session)
                 .ignoresSafeArea()
 
             Color.black.opacity(0.2).ignoresSafeArea()
 
-            // 2. Top bar + shutter (shutter hidden when reviewing)
+            // 2. Top bar + shutter — hidden once a photo is captured
             VStack(spacing: 0) {
-                FoodScanTopBar(selectedPhoto: $selectedPhoto, onDismiss: { dismiss() })
+                if !isReviewing {
+                    FoodScanTopBar(selectedPhoto: $selectedPhoto, onDismiss: { dismiss() })
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+
                 Spacer()
 
-                if viewModel.capturedImage == nil {
-                    FoodScanShutterButton(viewModel: viewModel)
+                if !isReviewing {
+                    FoodScanShutterButton(isCapturing: camera.isCapturing) {
+                        camera.capturePhoto { image in
+                            guard let image else { return }
+                            viewModel.photoSelected(image)
+                        }
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
             }
 
-            // 3. Description overlay — slides up when photo is taken
-            if viewModel.capturedImage != nil {
+            // 3. Description overlay — slides up after photo is taken
+            if isReviewing {
                 FoodScanDescriptionOverlay(
                     viewModel: viewModel,
                     localDescription: $localDescription,
@@ -45,22 +57,16 @@ struct FoodScanCameraView: View {
                     .zIndex(10)
             }
         }
+        .animation(.easeInOut(duration: 0.35), value: isReviewing)
         .animation(.easeInOut(duration: 0.4), value: {
             if case .analyzing = viewModel.scanState { return true }
             return false
         }())
-        .sheet(isPresented: $viewModel.showCamera) {
-            CameraPickerView(sourceType: .camera) { image in
-                viewModel.photoSelected(image)
-            }
-        }
         .onChange(of: selectedPhoto) { _, newItem in
             Task {
                 if let data = try? await newItem?.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data) {
-                    await MainActor.run {
-                        viewModel.photoSelected(uiImage)
-                    }
+                    await MainActor.run { viewModel.photoSelected(uiImage) }
                 }
             }
         }
@@ -73,7 +79,9 @@ struct FoodScanCameraView: View {
         .onChange(of: viewModel.shouldDismiss) { _, newValue in
             if newValue { dismiss() }
         }
-        .ignoresSafeArea(.container, edges: .all)  // ignores device edges but NOT keyboard
+        .onAppear  { camera.startSession() }
+        .onDisappear { camera.stopSession() }
+        .ignoresSafeArea(.container, edges: .all)
         .presentationDetents([.large])
         .presentationCornerRadius(32)
         .presentationDragIndicator(.visible)

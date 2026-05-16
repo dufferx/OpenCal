@@ -2,10 +2,11 @@ import SwiftUI
 
 struct OnboardingStep6View: View {
 
-    @ObservedObject var viewModel: OnboardingViewModel
+    var viewModel: OnboardingViewModel
     @Environment(\.openURL) private var openURL
 
     var body: some View {
+        @Bindable var viewModel = viewModel
         ZStack(alignment: .top) {
             AppConstants.Colors.backgroundPrimary
                 .ignoresSafeArea()
@@ -145,6 +146,6 @@ struct OnboardingStep6View: View {
 }
 
 #Preview {
-    @Previewable @StateObject var vm = OnboardingViewModel()
+    @Previewable @State var vm = OnboardingViewModel()
     OnboardingStep6View(viewModel: vm)
 }

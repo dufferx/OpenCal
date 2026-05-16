@@ -2,7 +2,7 @@ import SwiftUI
 
 struct OnboardingStep3View: View {
 
-    @ObservedObject var viewModel: OnboardingViewModel
+    var viewModel: OnboardingViewModel
 
     private let days: [Int] = Array(1...31)
     private let months: [Int] = Array(1...12)
@@ -128,6 +128,6 @@ struct OnboardingStep3View: View {
 }
 
 #Preview {
-    @Previewable @StateObject var vm = OnboardingViewModel()
+    @Previewable @State var vm = OnboardingViewModel()
     OnboardingStep3View(viewModel: vm)
 }

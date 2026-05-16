@@ -1,7 +1,7 @@
 import Foundation
-import Combine
+import Observation
 
-class OnboardingViewModel: ObservableObject {
+@Observable final class OnboardingViewModel {
 
     private let repository: UserProfileRepositoryProtocol
 
@@ -10,36 +10,36 @@ class OnboardingViewModel: ObservableObject {
     }
 
     // Step 1 — Photo + Name
-    @Published var profileImageData: Data? = nil
-    @Published var name: String = ""
+    var profileImageData: Data? = nil
+    var name: String = ""
 
     // Step 2 — Biological Sex
-    @Published var biologicalSex: BiologicalSex = .male
+    var biologicalSex: BiologicalSex = .male
 
     // Step 3 — Date of Birth
-    @Published var birthDate: Date = Calendar.current.date(
+    var birthDate: Date = Calendar.current.date(
         byAdding: .year, value: -25, to: Date()) ?? Date()
 
     // Step 2 — Body (skippable)
-    @Published var weightKg: String = ""
-    @Published var heightCm: String = ""
+    var weightKg: String = ""
+    var heightCm: String = ""
 
     // Step 3 — Daily Goals
-    @Published var calorieGoal: String = "2000"
-    @Published var proteinGoal: String = "150"
-    @Published var carbsGoal: String = "200"
-    @Published var fatGoal: String = "65"
-    @Published var fitnessGoal: FitnessGoal = .maintain
-    @Published var showGoalPicker: Bool = false
+    var calorieGoal: String = "2000"
+    var proteinGoal: String = "150"
+    var carbsGoal: String = "200"
+    var fatGoal: String = "65"
+    var fitnessGoal: FitnessGoal = .maintain
+    var showGoalPicker: Bool = false
 
     // Step 4 — API Key
-    @Published var apiKey: String = ""
-    @Published var apiProvider: AIProvider = .openAI
+    var apiKey: String = ""
+    var apiProvider: AIProvider = .openAI
 
     // Step 5 — HealthKit (handled by HealthKit request — no stored state here)
 
     // Navigation
-    @Published var currentStep: Int = 1
+    var currentStep: Int = 1
     let totalSteps: Int = 7
 
     // Validation

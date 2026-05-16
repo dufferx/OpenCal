@@ -1,20 +1,21 @@
 import Foundation
-import Combine
+import Observation
 
-class HomeViewModel: ObservableObject {
-    @Published var selectedDate: Date = .now
-    @Published var dailyLog: DailyLog = DailyLog(date: .now, entries: [])
-    @Published var userProfile: UserProfile = UserProfile.mock
-    @Published var profileImageData: Data? = nil
-    @Published var datesWithLogs: Set<DateComponents> = []
-    @Published var showManualEntry: Bool = false
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String? = nil
+@Observable final class HomeViewModel {
+    var selectedDate: Date = .now {
+        didSet { Task { await loadLog() } }
+    }
+    var dailyLog: DailyLog = DailyLog(date: .now, entries: [])
+    var userProfile: UserProfile = UserProfile.mock
+    var profileImageData: Data? = nil
+    var datesWithLogs: Set<DateComponents> = []
+    var showManualEntry: Bool = false
+    var isLoading: Bool = false
+    var errorMessage: String? = nil
 
     private let repository: FoodRepositoryProtocol
     private let profileRepository: UserProfileRepositoryProtocol
     var appState: AppState?
-    private var cancellables = Set<AnyCancellable>()
 
     init(
         repository: FoodRepositoryProtocol = FoodRepository(),
@@ -24,13 +25,6 @@ class HomeViewModel: ObservableObject {
         self.repository = repository
         self.profileRepository = profileRepository
         self.appState = appState
-
-        // Reload log whenever the selected date changes
-        $selectedDate
-            .sink { [weak self] _ in
-                Task { await self?.loadLog() }
-            }
-            .store(in: &cancellables)
 
         Task { await loadLog() }
         reloadProfile()
@@ -76,7 +70,7 @@ class HomeViewModel: ObservableObject {
             var updatedEntries = self.dailyLog.entries
             updatedEntries.append(entry)
             self.dailyLog = DailyLog(date: self.selectedDate, entries: updatedEntries)
-            self.appState?.selectedTab = "home"
+            self.appState?.selectedTab = .home
         }
         // Persist and reload for consistency
         do {
@@ -118,4 +112,3 @@ class HomeViewModel: ObservableObject {
         userProfile.dailyCalorieGoal
     }
 }
-

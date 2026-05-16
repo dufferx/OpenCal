@@ -10,17 +10,17 @@ import SwiftData
 
 @main
 struct OpenCalApp: App {
-    @StateObject private var appState = AppState()
+    @State private var appState = AppState()
 
     var body: some Scene {
         WindowGroup {
             if appState.hasCompletedOnboarding {
                 AppRootView()
-                    .environmentObject(appState)
+                    .environment(appState)
                     .modelContainer(ModelContainer.shared)
             } else {
                 OnboardingContainerView()
-                    .environmentObject(appState)
+                    .environment(appState)
             }
         }
     }
